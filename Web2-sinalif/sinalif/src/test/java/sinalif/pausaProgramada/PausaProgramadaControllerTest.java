@@ -51,15 +51,15 @@ public class PausaProgramadaControllerTest {
     // --- Método auxiliar para criar uma lista de Pausas Programadas de teste ---
     private List<PausaProgramada> createTestPausaList() {
         PausaProgramada pausa1 = new PausaProgramada();
-        pausa1.setId_pausa(1L);
-        pausa1.setData_hora_inicio(LocalDateTime.now().plusDays(1).withHour(8).withMinute(0));
-        pausa1.setData_hora_fim(LocalDateTime.now().plusDays(1).withHour(9).withMinute(0));
+        pausa1.setIdPausa(1L);
+        pausa1.setDataHoraInicio(LocalDateTime.now().plusDays(1).withHour(8).withMinute(0));
+        pausa1.setDataHoraFim(LocalDateTime.now().plusDays(1).withHour(9).withMinute(0));
         pausa1.setAtivo(true);
 
         PausaProgramada pausa2 = new PausaProgramada();
-        pausa2.setId_pausa(2L);
-        pausa2.setData_hora_inicio(LocalDateTime.now().plusDays(2).withHour(10).withMinute(0));
-        pausa2.setData_hora_fim(LocalDateTime.now().plusDays(2).withHour(11).withMinute(0));
+        pausa2.setIdPausa(2L);
+        pausa2.setDataHoraInicio(LocalDateTime.now().plusDays(2).withHour(10).withMinute(0));
+        pausa2.setDataHoraFim(LocalDateTime.now().plusDays(2).withHour(11).withMinute(0));
         pausa2.setAtivo(false);
 
         return List.of(pausa1, pausa2);
@@ -121,8 +121,8 @@ public class PausaProgramadaControllerTest {
     @DisplayName("POST /adm/pausas/save - Deve salvar pausa válida com sucesso")
     void testSalvarPausaProgramadaValida() throws Exception {
         PausaProgramada pausaParaSalvar = new PausaProgramada();
-        pausaParaSalvar.setData_hora_inicio(LocalDateTime.now().plusHours(1));
-        pausaParaSalvar.setData_hora_fim(LocalDateTime.now().plusHours(2));
+        pausaParaSalvar.setDataHoraInicio(LocalDateTime.now().plusHours(1));
+        pausaParaSalvar.setDataHoraFim(LocalDateTime.now().plusHours(2));
         pausaParaSalvar.setAtivo(true);
 
         when(pausaProgramadaService.salvarPausaProgramada(any(PausaProgramada.class))).thenReturn(pausaParaSalvar);
@@ -141,8 +141,8 @@ public class PausaProgramadaControllerTest {
     @DisplayName("POST /adm/pausas/save - Deve falhar a validação se data de início for nula")
     void testSalvarPausaProgramadaDataInicioNula() throws Exception {
         PausaProgramada pausaInvalida = new PausaProgramada();
-        pausaInvalida.setData_hora_inicio(null); // Nulo para causar erro de validação
-        pausaInvalida.setData_hora_fim(LocalDateTime.now().plusHours(2));
+        pausaInvalida.setDataHoraInicio(null); // Nulo para causar erro de validação
+        pausaInvalida.setDataHoraFim(LocalDateTime.now().plusHours(2));
         pausaInvalida.setAtivo(true);
 
         mockMvc.perform(post("/adm/pausas/save")
@@ -150,7 +150,7 @@ public class PausaProgramadaControllerTest {
                         .flashAttr("pausa", pausaInvalida))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pages/adm/pausas/create"))
-                .andExpect(model().attributeHasFieldErrors("pausa", "data_hora_inicio"))
+                .andExpect(model().attributeHasFieldErrors("pausa", "dataHoraInicio"))
                 .andExpect(content().string(containsString("Data de início é um campo obrigatório")));
 
         verify(pausaProgramadaService, never()).salvarPausaProgramada(any(PausaProgramada.class));
@@ -161,8 +161,8 @@ public class PausaProgramadaControllerTest {
     @DisplayName("POST /adm/pausas/save - Deve falhar a validação se data de início for passada")
     void testSalvarPausaProgramadaDataInicioPassada() throws Exception {
         PausaProgramada pausaInvalida = new PausaProgramada();
-        pausaInvalida.setData_hora_inicio(LocalDateTime.now().minusDays(1)); // Data no passado
-        pausaInvalida.setData_hora_fim(LocalDateTime.now().plusHours(2));
+        pausaInvalida.setDataHoraInicio(LocalDateTime.now().minusDays(1)); // Data no passado
+        pausaInvalida.setDataHoraFim(LocalDateTime.now().plusHours(2));
         pausaInvalida.setAtivo(true);
 
         mockMvc.perform(post("/adm/pausas/save")
@@ -170,7 +170,7 @@ public class PausaProgramadaControllerTest {
                         .flashAttr("pausa", pausaInvalida))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pages/adm/pausas/create"))
-                .andExpect(model().attributeHasFieldErrors("pausa", "data_hora_inicio"))
+                .andExpect(model().attributeHasFieldErrors("pausa", "dataHoraInicio"))
                 .andExpect(content().string(containsString("A data de início deve ser no presente ou futuro.")));
 
         verify(pausaProgramadaService, never()).salvarPausaProgramada(any(PausaProgramada.class));
@@ -182,9 +182,9 @@ public class PausaProgramadaControllerTest {
     @DisplayName("GET /adm/pausas/edit/{id} - Deve exibir formulário de edição para Admin")
     void testAtualizarPausaProgramadaPageForAdmin() throws Exception {
         PausaProgramada pausaExistente = new PausaProgramada();
-        pausaExistente.setId_pausa(1L);
-        pausaExistente.setData_hora_inicio(LocalDateTime.now().plusDays(5));
-        pausaExistente.setData_hora_fim(LocalDateTime.now().plusDays(5).plusHours(2));
+        pausaExistente.setIdPausa(1L);
+        pausaExistente.setDataHoraInicio(LocalDateTime.now().plusDays(5));
+        pausaExistente.setDataHoraFim(LocalDateTime.now().plusDays(5).plusHours(2));
         pausaExistente.setAtivo(true);
 
         when(pausaProgramadaService.detalharPausaProgramada(1L)).thenReturn(pausaExistente);

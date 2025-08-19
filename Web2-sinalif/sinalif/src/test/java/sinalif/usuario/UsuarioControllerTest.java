@@ -55,7 +55,7 @@ public class UsuarioControllerTest {
     // --- Métodos Auxiliares para criar dados de teste ---
     private List<Usuario> createTestUserList() {
         Perfil adminRole = new Perfil();
-        adminRole.setId_perfil(1L);
+        adminRole.setIdPerfil(1L);
         adminRole.setNome("Admin");
 
         Usuario user1 = new Usuario();
@@ -69,11 +69,11 @@ public class UsuarioControllerTest {
 
     private List<Perfil> createTestPerfilList() {
         Perfil adminRole = new Perfil();
-        adminRole.setId_perfil(1L);
+        adminRole.setIdPerfil(1L);
         adminRole.setNome("Admin");
 
         Perfil userRole = new Perfil();
-        userRole.setId_perfil(2L);
+        userRole.setIdPerfil(2L);
         userRole.setNome("User");
 
         return List.of(adminRole, userRole);
@@ -327,7 +327,7 @@ public class UsuarioControllerTest {
     void testUpdateProfilePhoto() throws Exception {
         Usuario updatedUsuario = new Usuario();
         updatedUsuario.setIdUsuario(1L);
-        updatedUsuario.setUrl_foto_perfil("http://example.com/new_photo.jpg");
+        updatedUsuario.setUrlFotoPerfil("http://example.com/new_photo.jpg");
         updatedUsuario.setEmail("userAuth@iftm.edu.br");
 
         when(usuarioService.updateProfilePicture(anyLong(), anyString())).thenReturn(updatedUsuario);
@@ -348,7 +348,7 @@ public class UsuarioControllerTest {
     void testToggleNotifications() throws Exception {
         Usuario updatedUsuario = new Usuario();
         updatedUsuario.setIdUsuario(1L);
-        updatedUsuario.setNotificacoes_ativas(true);
+        updatedUsuario.setNotificacoesAtivas(true);
         updatedUsuario.setEmail("userAuth@iftm.edu.br");
 
         when(usuarioService.toggleNotifications(anyLong(), any(Boolean.class))).thenReturn(updatedUsuario);

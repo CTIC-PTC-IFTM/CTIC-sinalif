@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -52,8 +53,8 @@ public class PausaProgramadaIntegrationTest {
     @DisplayName("Integration: Deve salvar uma nova pausa programada e verificar no banco")
     void testSaveNewPausaProgramadaIntegration() throws Exception {
         PausaProgramada novaPausa = new PausaProgramada();
-        novaPausa.setData_hora_inicio(LocalDateTime.now().plusHours(3));
-        novaPausa.setData_hora_fim(LocalDateTime.now().plusHours(4));
+        novaPausa.setDataHoraInicio(LocalDateTime.now().plusHours(3));
+        novaPausa.setDataHoraFim(LocalDateTime.now().plusHours(4));
         novaPausa.setAtivo(true);
         mockMvc.perform(post("/adm/pausas/save")
                         .with(csrf())
@@ -62,7 +63,7 @@ public class PausaProgramadaIntegrationTest {
                 .andExpect(redirectedUrl("/adm/pausas"));
         List<PausaProgramada> pausasNoBanco = pausaProgramadaRepository.findAll();
         assertFalse(pausasNoBanco.isEmpty());
-        assertTrue(pausasNoBanco.stream().anyMatch(p -> p.isAtivo() == true && p.getData_hora_inicio().getHour() == novaPausa.getData_hora_inicio().getHour()));
+        assertTrue(pausasNoBanco.stream().anyMatch(p -> p.isAtivo() == true && p.getDataHoraInicio().getHour() == novaPausa.getDataHoraInicio().getHour()));
     }
 
     @Test
@@ -70,15 +71,15 @@ public class PausaProgramadaIntegrationTest {
     @DisplayName("Integration: Deve atualizar uma pausa programada existente e verificar no banco")
     void testUpdateExistingPausaProgramadaIntegration() throws Exception {
         PausaProgramada pausaExistente = new PausaProgramada();
-        pausaExistente.setData_hora_inicio(LocalDateTime.now().plusDays(1).withHour(10).withMinute(0));
-        pausaExistente.setData_hora_fim(LocalDateTime.now().plusDays(1).withHour(11).withMinute(0));
+        pausaExistente.setDataHoraInicio(LocalDateTime.now().plusDays(1).withHour(10).withMinute(0));
+        pausaExistente.setDataHoraFim(LocalDateTime.now().plusDays(1).withHour(11).withMinute(0));
         pausaExistente.setAtivo(true);
         PausaProgramada savedPausa = pausaProgramadaService.salvarPausaProgramada(pausaExistente); // Salva usando o serviço real
 
         PausaProgramada updatedDetails = new PausaProgramada();
-        updatedDetails.setId_pausa(savedPausa.getId_pausa()); // Importante para o mapeamento
-        updatedDetails.setData_hora_inicio(LocalDateTime.now().plusDays(2).withHour(12).withMinute(0));
-        updatedDetails.setData_hora_fim(LocalDateTime.now().plusDays(2).withHour(13).withMinute(0));
+        updatedDetails.setIdPausa(savedPausa.getIdPausa()); // Importante para o mapeamento
+        updatedDetails.setDataHoraInicio(LocalDateTime.now().plusDays(2).withHour(12).withMinute(0));
+        updatedDetails.setDataHoraFim(LocalDateTime.now().plusDays(2).withHour(13).withMinute(0));
         updatedDetails.setAtivo(false);
         // O controlador usa GET /edit/{id} para carregar e POST /save para salvar a edição
         mockMvc.perform(post("/adm/pausas/save")
@@ -87,9 +88,9 @@ public class PausaProgramadaIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/adm/pausas"));
         // Verifica no banco se as alterações foram persistidas
-        PausaProgramada fetchedPausa = pausaProgramadaRepository.findById(savedPausa.getId_pausa()).orElseThrow();
+        PausaProgramada fetchedPausa = pausaProgramadaRepository.findById(savedPausa.getIdPausa()).orElseThrow();
         assertTrue(fetchedPausa.isAtivo() == false);
-        assertTrue(fetchedPausa.getData_hora_inicio().getHour() == 12);
+        assertTrue(fetchedPausa.getDataHoraInicio().getHour() == 12);
     }
 
     @Test
@@ -97,15 +98,15 @@ public class PausaProgramadaIntegrationTest {
     @DisplayName("Integration: Deve deletar uma pausa programada e verificar no banco")
     void testDeletePausaProgramadaIntegration() throws Exception {
         PausaProgramada pausaToDelete = new PausaProgramada();
-        pausaToDelete.setData_hora_inicio(LocalDateTime.now().plusDays(1).withHour(10).withMinute(0));
-        pausaToDelete.setData_hora_fim(LocalDateTime.now().plusDays(1).withHour(11).withMinute(0));
+        pausaToDelete.setDataHoraInicio(LocalDateTime.now().plusDays(1).withHour(10).withMinute(0));
+        pausaToDelete.setDataHoraFim(LocalDateTime.now().plusDays(1).withHour(11).withMinute(0));
         pausaToDelete.setAtivo(true);
         PausaProgramada savedPausa = pausaProgramadaService.salvarPausaProgramada(pausaToDelete);
 
-        mockMvc.perform(get("/adm/pausas/delete/" + savedPausa.getId_pausa()))
+        mockMvc.perform(get("/adm/pausas/delete/" + savedPausa.getIdPausa()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/adm/pausas"));
         // Verifica se a pausa foi removida do banco
-        assertFalse(pausaProgramadaRepository.existsById(savedPausa.getId_pausa()));
+        assertFalse(pausaProgramadaRepository.existsById(savedPausa.getIdPausa()));
     }
 }
