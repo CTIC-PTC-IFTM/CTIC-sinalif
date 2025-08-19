@@ -31,7 +31,7 @@ public class SecurityConfig {
 
                         // Rotas específicas do ALUNO
                         .requestMatchers("/").hasAnyAuthority("Aluno", "Funcionário", "Admin")
-                        .requestMatchers("/minhas-sugestoes", "/sugestoes/create", "/sugestoes/save", "/sugestoes/delete/**").hasAnyAuthority("Aluno", "Funcionário", "Admin")
+                        .requestMatchers("/sugestoes/minhas-sugestoes", "/sugestoes/create", "/sugestoes/save", "/sugestoes/delete/**", "/sugestoes/reproduzir/**").hasAnyAuthority("Aluno", "Funcionário", "Admin")
                         .requestMatchers("/reproduzir").hasAnyAuthority("Aluno", "Funcionário", "Admin")
                         .requestMatchers("/config/**").hasAnyAuthority("Aluno", "Funcionário", "Admin")
 
@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/alarmes/**").hasAnyAuthority("Funcionário", "Admin")
                         .requestMatchers("/etiquetas/**").hasAnyAuthority("Funcionário", "Admin")
                         .requestMatchers("/pausas/**").hasAnyAuthority("Funcionário", "Admin")
+                        .requestMatchers("/reproduzir/**").hasAnyAuthority("Funcionário", "Admin")
 
                         // ROTAS PARA ADMIN
                         .requestMatchers("/adm/**").hasAuthority("Admin")

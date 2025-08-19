@@ -29,13 +29,17 @@ public class SugestaoController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Usuario usuarioLogado = IUsuarioService.detalharUsuario(email);
 
-        if(usuarioLogado.getRoles().get(0).equals("Aluno")){
-            model.addAttribute("sugestaoList", ISugestaoService.listarMinhasSugestoes(usuarioLogado.getIdUsuario()));
-            return "pages/sugestoes/list";
-        }else{
-            model.addAttribute("sugestaoList", ISugestaoService.listarSugestoes());
-            return "pages/sugestoes/list";
-        }
+        model.addAttribute("sugestaoList", ISugestaoService.listarSugestoes());
+        return "pages/sugestoes/list";
+    }
+
+    @GetMapping("/minhas-sugestoes")
+    public String listarMinhasSugestoes(Model model) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioLogado = IUsuarioService.detalharUsuario(email);
+
+        model.addAttribute("sugestaoList", ISugestaoService.listarMinhasSugestoes(usuarioLogado.getIdUsuario()));
+        return "pages/sugestoes/list";
     }
 
     @GetMapping("/{id}")
@@ -66,16 +70,16 @@ public class SugestaoController {
 
         sugestao.setUsuario(usuarioLogado);
         ISugestaoService.salvarSugestao(sugestao);
-        return "redirect:/sugestoes";
+        return "redirect:/sugestoes/minhas-sugestoes";
     }
 
     @GetMapping("/save/musica/{id}/{status}")
     public String salvarMusicaPorsugestao(@PathVariable("id") Long id, @PathVariable String status) {
         Sugestao sugestao = ISugestaoService.detalharSugestao(id);
-        sugestao.setStatus_sugestao(status);
+        sugestao.setStatusSugestao(status);
 
         Musica musica = new Musica();
-        musica.setUrl(sugestao.getUrl_sugerida());
+        musica.setUrl(sugestao.getUrl());
         musica.setUsuario(sugestao.getUsuario());
         IMusicaService.salvarMusica(musica);
 
@@ -86,7 +90,7 @@ public class SugestaoController {
     @GetMapping("/delete/{id}")
     public String excluirSugestao(@PathVariable("id") Long id) {
         ISugestaoService.excluirSugestao(id);
-        return "redirect:/sugestoes";
+        return "redirect:/sugestoes/minhas-sugestoes";
     }
 
     @GetMapping("/analise")
