@@ -1,5 +1,19 @@
 # Sinal IF ⏰
 
+## Sobre o uso da Aplicação
+
+### Inicialização automática
+Para que o sistema possa ser inicializado automáticamente é necessário seguir alguns passo a passo.
+
+1. Certifique-se de que o Maven está instalado na máquina. Link de [donwload](https://maven.apache.org/download.cgi).
+2. Salvar arquivo .jar da aplicação (sinalif.jar) em uma pasta fixa (ex.: C:\Program Files\Sinal IF). Caso seja necessário salvar um novo arquivo .jar, basta abrir o terminal na pasta raiz da aplicação (onde está o pom.xml) e executar o seguinte comando: <br>
+   > mvn clean package
+3. Salvar os arquivos .bat na pasta de scripts de inicialização, para abrir essa pasta basta usar o atalho Windows + R e executar "shell:startup".
+4. Verifique se o caminho e as informações nos comandos dos arquivos .bat estão de acordo a realidade da máquina.
+
+### Criação do Banco de Dados
+Antes de executar a aplicação pela primeira vez, é necessário primeiro criar o banco de dados no pdAdmin4 com o nome "bd_sinalif". Lembre-se de ter a conexão configurada através da porta 5432 e também veja se o usuário e a senha são, respectivamente, "postgres" e "123456".
+
 ## Contexto 📖
 - **Instituição**: Instituo Federal de Educação, Ciência e Tecnologia do Triângulo Mineiro - Campus Patrocínio.
 - **Curso**: curso superior de Tecnologia em Análise e Desenvolvimento de Sistemas (ADS).
