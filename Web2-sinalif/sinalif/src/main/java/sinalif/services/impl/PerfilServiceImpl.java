@@ -42,7 +42,7 @@ public class PerfilServiceImpl implements PerfilService {
 
 	@Override
 	public void excluirPerfil(Perfil perfil) {
-		perfilRepository.deleteById(perfil.getId_perfil());
+		perfilRepository.deleteById(perfil.getIdPerfil());
 	}
 
 	@Override

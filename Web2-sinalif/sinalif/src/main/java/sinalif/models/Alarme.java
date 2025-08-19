@@ -23,15 +23,16 @@ public class Alarme {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long id_alarme;
+	@Column(name = "id_alarme")
+	private long idAlarme;
 
 	@NotNull(message = "O horário programado é um campo obrigatório")
-	@Column(nullable = false)
-	private LocalTime horario_programado;
+	@Column(name = "horario_programado", nullable = false)
+	private LocalTime horarioProgramado;
 
 	@NotBlank(message= "Dias da Semana é um campo obrigatório")
-	@Column(nullable = false)
-	private String dias_semana;
+	@Column(name = "dias_semana", nullable = false)
+	private String diasSemana;
 
 	@NotNull(message= "Status Inicial é um campo obrigatório")
 	@Column(nullable = true)
@@ -44,12 +45,12 @@ public class Alarme {
 	private Instant dataUltimaExecucao;
 
 	@CreatedDate
-	@Column(nullable = true, updatable = false)
-	private LocalDateTime data_criacao;
+	@Column(name = "data_criacao", nullable = true, updatable = false)
+	private LocalDateTime dataCriacao;
 
 	@LastModifiedDate
-	@Column(nullable = true)
-	private LocalDateTime data_modificacao;
+	@Column(name = "data_modificacao", nullable = true)
+	private LocalDateTime dataModificacao;
 
 	@NotNull(message = "A etiqueta é um campo obrigatório")
 	@ManyToOne(fetch = FetchType.EAGER)

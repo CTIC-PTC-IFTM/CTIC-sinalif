@@ -2,12 +2,16 @@ package sinalif.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "musica")
 @EntityListeners(AuditingEntityListener.class)
@@ -17,7 +21,8 @@ public class Musica {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id_musica;
+    @Column(name = "id_musica")
+    private long idMusica;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
@@ -29,52 +34,8 @@ public class Musica {
 
     @CreatedDate
     @Column(name = "data_criacao", updatable = false)
-    private LocalDateTime data_criacao;
+    private LocalDateTime dataCriacao;
 
     @OneToMany(mappedBy = "musica", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<LogReproducao> logs;
-
-    public Long getId_musica() {
-        return id_musica;
-    }
-
-    public void setId_musica(Long id_musica) {
-        this.id_musica = id_musica;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public LocalDateTime getData_criacao() {
-        return data_criacao;
-    }
-
-    public void setData_criacao(LocalDateTime data_criacao) {
-        this.data_criacao = data_criacao;
-    }
-
-    public void setId_musica(long id_musica) {
-        this.id_musica = id_musica;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public List<LogReproducao> getLogs() {
-        return logs;
-    }
-
-    public void setLogs(List<LogReproducao> logs) {
-        this.logs = logs;
-    }
 }

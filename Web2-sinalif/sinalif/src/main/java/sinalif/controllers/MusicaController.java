@@ -13,6 +13,8 @@ import sinalif.repositories.MusicaRepository;
 import sinalif.repositories.UsuarioRepository;
 import sinalif.services.MusicaService;
 import sinalif.services.SugestaoService;
+import sinalif.services.UsuarioService;
+
 import java.util.Optional;
 
 @Controller
@@ -21,11 +23,7 @@ public class MusicaController {
     @Autowired
     private MusicaService IMusicaService;
     @Autowired
-    private SugestaoService ISugestaoService;
-    @Autowired
-    private MusicaRepository musicaRepository;
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioService IUsuarioService;
 
     @GetMapping
     public String listarMusicas(Model model){
@@ -52,15 +50,11 @@ public class MusicaController {
 
         if(musica.getUsuario() == null || musica.getUsuario().getIdUsuario() == null) {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            Optional<Usuario> usuarioLogado = usuarioRepository.findUserByEmail(email);
+            Usuario usuarioLogado = IUsuarioService.detalharUsuario(email);
 
-            if (usuarioLogado.isEmpty()) {
-                throw new UsernameNotFoundException("Usuário com email: " + email + " não foi encontrado");
-            } else {
-                musica.setUsuario(usuarioLogado.get());
-                IMusicaService.salvarMusica(musica);
-                return "redirect:/musicas";
-            }
+            musica.setUsuario(usuarioLogado);
+            IMusicaService.salvarMusica(musica);
+            return "redirect:/musicas";
         }else{
             IMusicaService.salvarMusica(musica);
             return "redirect:/musicas";

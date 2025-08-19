@@ -7,8 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "perfil")
 public class Perfil implements GrantedAuthority {
@@ -16,34 +20,19 @@ public class Perfil implements GrantedAuthority {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long id_perfil;
+	@Column(name = "id_perfil")
+	private long idPerfil;
 
 	@NotBlank(message= "Nome é um campo obrigatório")
 	@Column(nullable = false)
 	private String nome;
 
-	public long getId_perfil() {
-		return id_perfil;
-	}
-
-	public void setId_perfil(long id_perfil) {
-		this.id_perfil = id_perfil;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
+	@Override
+	public String getAuthority() {
+		return this.nome;
 	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}
-
-	@Override
-	public String getAuthority() {
-		return this.nome;
 	}
 }

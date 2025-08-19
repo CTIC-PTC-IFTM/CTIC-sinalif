@@ -2,9 +2,13 @@ package sinalif.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "etiqueta")
 public class Etiqueta {
@@ -12,7 +16,8 @@ public class Etiqueta {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long id_etiqueta;
+	@Column(name = "id_etiqueta")
+	private long idEtiqueta;
 
 	@NotBlank(message= "Nome é um campo obrigatório")
 	@Column(nullable = false)
@@ -24,42 +29,4 @@ public class Etiqueta {
 
 	@OneToMany(mappedBy = "etiqueta", cascade = CascadeType.ALL)
 	private List<Alarme> alarmes;
-
-	public List<Alarme> getAlarmes() {
-		return alarmes;
-	}
-
-	public void setAlarmes(List<Alarme> alarmes) {
-		this.alarmes = alarmes;
-	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public long getId_etiqueta() {
-		return id_etiqueta;
-	}
-
-	public void setId_etiqueta(long id_etiqueta) {
-		this.id_etiqueta = id_etiqueta;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getDuracao() {
-		return duracao;
-	}
-
-	public void setDuracao(String duracao) {
-		this.duracao = duracao;
-	}
-
-		
 }

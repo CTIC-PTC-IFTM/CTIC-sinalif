@@ -27,13 +27,23 @@ public class AlarmeServiceImpl implements AlarmeService {
 	}
 
 	@Override
+	public List<Alarme> listarAlarmesPendentesParaHoje(){
+		return alarmeRepository.findAlarmesPendentesParaHoje();
+	}
+
+	@Override
+	public List<Alarme> listarAlarmesPendentesParaAgora(){
+		return alarmeRepository.findAlarmesPendentesParaAgora();
+	}
+
+	@Override
 	public Alarme detalharAlarme(Long id) {
 		return alarmeRepository.findById(id).get();
 	}
 
 	@Override
 	public Alarme salvarAlarme(Alarme alarme){
-		alarme.setEtiqueta(etiquetaRepository.getReferenceById(alarme.getEtiqueta().getId_etiqueta()));
+		alarme.setEtiqueta(etiquetaRepository.getReferenceById(alarme.getEtiqueta().getIdEtiqueta()));
 		return alarmeRepository.save(alarme);
 	}
 
@@ -41,11 +51,11 @@ public class AlarmeServiceImpl implements AlarmeService {
 	public Alarme atualizarAlarme(Long id, Alarme alarmeAtualizado) {
 	    Alarme alarmeExistente = alarmeRepository.findById(id)
 	        .orElseThrow(() -> new RuntimeException("Alarme não encontrado com ID: " + id));
-	    alarmeExistente.setHorario_programado(alarmeAtualizado.getHorario_programado());
-	    alarmeExistente.setDias_semana(alarmeAtualizado.getDias_semana());
+	    alarmeExistente.setHorarioProgramado(alarmeAtualizado.getHorarioProgramado());
+	    alarmeExistente.setDiasSemana(alarmeAtualizado.getDiasSemana());
 	    alarmeExistente.setAtivo(alarmeAtualizado.isAtivo());
 	    alarmeExistente.setPausado(alarmeAtualizado.isPausado());
-	    alarmeExistente.setData_modificacao(LocalDateTime.now());
+	    alarmeExistente.setDataModificacao(LocalDateTime.now());
 	    alarmeExistente.setEtiqueta(alarmeAtualizado.getEtiqueta());
 	    return alarmeRepository.save(alarmeExistente);
 	}
@@ -61,6 +71,6 @@ public class AlarmeServiceImpl implements AlarmeService {
 
 	@Override
 	public void excluirAlarme(Alarme alarme) {
-		alarmeRepository.deleteById(alarme.getId_alarme());
+		alarmeRepository.deleteById(alarme.getIdAlarme());
 	}
 }
