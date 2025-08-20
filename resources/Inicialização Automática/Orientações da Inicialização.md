@@ -1,5 +1,7 @@
 # Inicialização Automática
 
+## Estrutura dos arquivos
+
 1. Acesse a pasta de inicialização referente ao seu usuário do Windows utilizando o comando de atalho "Windows" + "R" e digite "**shell:startup**".
 2. Cole o arquivo "autostart_sinalif.bat" na pasta em que foi aberta ("C:\Users\USUARIO\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup") para que estes sejam executados na inicialização da máquina.
 3. Cole o arquivo "sinalif-1.0.jar" na pasta "C:\Program Files\Sinal IF".
@@ -7,7 +9,7 @@
 
 Pronto, feito isto agora o Sinal IF e seus recursos serão executados automaticamente na inicialização da máquina.
 
-# Atualização do arquivo .jar
+## Atualização do arquivo .jar
 
 A cada vez em que o sistema passa por alguma atualização é necessário que seja criado novamente o arquivo .jar. Para isso basta seguir o seguinte passo a passo:
 
