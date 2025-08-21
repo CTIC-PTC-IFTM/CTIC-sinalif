@@ -17,6 +17,6 @@ echo Abrindo a página web...
 start http://localhost:8080
 
 echo Iniciando o servidor Java Spring...
-java -jar "C:\Program Files\Sinal IF\sinalif-1.0.jar"
+java -jar "C:\Program Files\Sinal IF\CTIC-sinalif\resources\inicializacao_automatica\sinalif-1.0.jar"
 
 exit
