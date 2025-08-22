@@ -85,6 +85,10 @@ if exist "%DEST_DIR%" (
     echo # Copia do diretorio raiz realizada com sucesso.
     echo.
 
+    echo [INFO] Criando base do banco de dados no PostgreSQL...
+    call "%DEST_DIR%\recursos\scripts\createdb.bat"
+    echo.
+
     echo [INFO] Criando arquivo .jar para inicializacao automatica...
     call "%DEST_DIR%\recursos\scripts\createjar.bat"
     echo.
@@ -100,10 +104,6 @@ if exist "%DEST_DIR%" (
         pause
         exit /B
     )
-
-    echo [INFO] Criando base do banco de dados no PostgreSQL...
-    call "%DEST_DIR%\recursos\scripts\createdb.bat"
-    echo.
     
     goto :CreateShortcut
 
