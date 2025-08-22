@@ -102,7 +102,7 @@ public class AgendamentoServiceImpl implements AgendamentoService {
         ativoSessao = true;
 
         try {
-            String diretorioPath = "musicas";
+            String diretorioPath = "../recursos/musicas";
             File diretorio = new File(diretorioPath);
 
             File[] files = diretorio.listFiles((dir, name) -> name.toLowerCase().endsWith(".mp3"));

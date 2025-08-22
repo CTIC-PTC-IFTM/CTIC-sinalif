@@ -6,7 +6,7 @@ title Instalador Sinal IF
 :: ================================================================
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 if '%errorlevel%' NEQ '0' (
-    echo [1/8] Solicitando privilegios de administrador...
+    echo [INFO] Solicitando privilegios de administrador...
     goto UACPrompt
 ) else ( goto gotAdmin )
 
@@ -28,15 +28,19 @@ echo ===========================================
 echo.
 
 set "DEST_DIR=C:\Program Files\Sinal IF"
-set "AUTOSTART_SOURCE=%~dp0resources\inicializacao_automatica\autostart_sinalif.bat"
+set "AUTOSTART_SOURCE=%~dp0recursos\scripts\autostart.bat"
 set "STARTUP_DIR=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"
 
-echo [2/8] Verificando instalacao anterior...
+echo [INFO] Verificando instalacao anterior...
 echo.
 if exist "%DEST_DIR%" (
     goto :RemoveOldInstall
 ) else (
-    REM Se a pasta nao existe, vai direto para a instalacao
+    echo [INFO] Criando diretorio de instalacao...
+    mkdir "%DEST_DIR%"
+    echo # Diretorio criado com sucesso.
+    echo.
+
     goto :Install
 )
 
@@ -51,86 +55,116 @@ if exist "%DEST_DIR%" (
     set /p "confirm=Voce deseja prosseguir com a instalacao limpa? (s/n): "
     echo.
     
-    if /I "%confirm%"=="s" goto :ActionDelete
-    if /I "%confirm%"=="n" goto :ActionSkipDelete
+    if /I "%confirm%"=="s" (
+        echo [INFO] Removendo diretorio da instalacao anterior...
+        RD /S /Q "%DEST_DIR%"
+        echo # Diretorio anterior removido.
+        echo.
+
+        echo [INFO] Criando diretorio de instalacao...
+        mkdir "%DEST_DIR%"
+        echo # Novo diretorio criado com sucesso.
+        echo.
+
+        goto :Install
+    )
+    if /I "%confirm%"=="n" (
+        echo [INFO] Prosseguindo sem limpeza do diretorio anterior.
+        echo.
+        goto :Install
+    )
 
     echo # Resposta invalida. Por favor, digite S para Sim ou N para Nao.
     echo.
     goto :confirm
 
-:ActionDelete
-    echo [3/8] Removendo diretorio da instalacao anterior...
-    RD /S /Q "%DEST_DIR%"
-    echo # Diretorio anterior removido.
-    echo.
-    goto :Install
-
-:ActionSkipDelete
-    echo [3/8] Prosseguindo sem limpeza do diretorio anterior.
-    echo.
-    goto :Install
-
 :Install
-    echo [4/8] Criando diretorio de destino...
-    mkdir "%DEST_DIR%"
-    echo # Diretorio criado com sucesso.
-    echo.
-    
-    echo [5/8] Copiando arquivos do programa...
+    echo [INFO] Copiando arquivos do programa...
     xcopy "%~dp0*.*" "%DEST_DIR%" /E /H /C /I /Y > nul
+    del "%DEST_DIR%\%~nx0"
     echo # Copia do diretorio raiz realizada com sucesso.
     echo.
 
-    echo [6/8] Copiando arquivo para a inicializacao automatica...
+    echo [INFO] Criando arquivo .jar para inicializacao automatica...
+    call "%DEST_DIR%\recursos\scripts\createjar.bat"
+    echo.
+
+    echo [INFO] Copiando arquivo para a inicializacao automatica...
     if exist "%AUTOSTART_SOURCE%" (
         xcopy "%AUTOSTART_SOURCE%" "%STARTUP_DIR%" /Y > nul
         echo # Arquivo de inicializacao copiado com sucesso.
         echo.
     ) else (
-        echo # ERRO: Arquivo 'autostart_sinalif.bat' nao encontrado.
+        echo # ERRO: Arquivo inicializacao nao encontrado.
         echo # Por favor, verifique se o arquivo esta presente na pasta %AUTOSTART_SOURCE%.
         pause
         exit /B
     )
 
+    echo [INFO] Criando base do banco de dados no PostgreSQL...
+    call "%DEST_DIR%\recursos\scripts\createdb.bat"
+    echo.
+    
     goto :CreateShortcut
 
 :CreateShortcut
-    echo [4/5] Criando atalho na area de trabalho...
-
-    set "LNK_FILE=%USERPROFILE%\Desktop\Sinal IF.lnk"
-    set "TARGET_PATH=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\autostart_sinalif.bat"
-    set "ICON_PATH=%DEST_DIR%\resources\img\sinalif.ico"
-    set "WORK_DIR=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"
-
-    if exist "%LNK_FILE%" del /F /Q "%LNK_FILE%"
-
-    REM --- Cria um script VBS temporario para criar o atalho ---
-    echo Set oShell = CreateObject("WScript.Shell") > "%temp%\createshortcut.vbs"
-    echo Set oLink = oShell.CreateShortcut("%LNK_FILE%") >> "%temp%\createshortcut.vbs"
-    echo oLink.TargetPath = "%TARGET_PATH%" >> "%temp%\createshortcut.vbs"
-    echo oLink.IconLocation = "%ICON_PATH%" >> "%temp%\createshortcut.vbs"
-    echo oLink.WorkingDirectory = "%WORK_DIR%" >> "%temp%\createshortcut.vbs"
-    echo oLink.Save >> "%temp%\createshortcut.vbs"
-
-    REM --- Executa o VBS e depois o apaga ---
-    cscript //nologo "%temp%\createshortcut.vbs" > nul
-    del "%temp%\createshortcut.vbs"
-
-    if exist "%LNK_FILE%" (
-        echo # Atalho "Sinal IF.lnk" criado na area de trabalho.
-    ) else (
-        echo # ERRO: Nao foi possivel criar o atalho na area de trabalho.
+    echo [INFO] Criando atalho na area de trabalho...
+    
+    set "LNK_FILENAME=Sinal IF.lnk"
+    set "TARGET_PATH=%DEST_DIR%\recursos\scripts\autostart.bat"
+    set "ICON_PATH=%DEST_DIR%\recursos\imagens\sinalif.ico"
+    for /f "usebackq tokens=*" %%i in (`powershell -NoProfile -Command "[System.Environment]::GetFolderPath('Desktop')"`) do set "DESKTOP_PATH=%%i"
+    set "LNK_FULL_PATH=%DESKTOP_PATH%\%LNK_FILENAME%"
+    
+    if not exist "%ICON_PATH%" (
+        echo # ERRO: Arquivo de icone nao encontrado em "%ICON_PATH%".
+        echo Crie o atalho manualmente ou corrija o erro e tente novamente.
+        pause
+        exit /B
     )
+
+    if exist "%LNK_FULL_PATH%" (
+        del "%LNK_FULL_PATH%"
+    ) 
+    
+    powershell -ExecutionPolicy Bypass -Command "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('%LNK_FULL_PATH%'); $s.TargetPath = '%TARGET_PATH%'; $s.IconLocation = '%ICON_PATH%'; $s.WorkingDirectory = '%DEST_DIR%'; $s.Save()"
+    
+    if exist "%LNK_FULL_PATH%" (
+        echo # Atalho criado com sucesso.
+        echo.
+    ) else (
+        echo # ERRO: Nao foi possivel verificar a criacao do atalho em "%LNK_FULL_PATH%".
+        echo.
+    )
+
     goto :Finalize
 
 :Finalize
-    echo.
-    echo [8/8] Processo finalizado.
+    echo [INFO] Processo finalizado.
     echo.
     echo ===========================================
     echo     Instalacao Concluida!
     echo ===========================================
     echo.
-    pause
-    exit /B
+
+    goto :openApp
+
+:openApp
+    set "openApp="
+    set /p "openApp=Voce deseja executar o Sinal IF? (s/n): "
+    echo.
+    
+    if /I "%openApp%"=="s" (
+        cls
+        title Sinal IF
+        call "C:\Program Files\Sinal IF\recursos\scripts\autostart.bat"
+        exit /B
+    ) 
+    
+    if /I "%openApp%"=="n" (
+        exit /B
+    )
+
+    echo # Resposta invalida. Por favor, digite S para Sim ou N para Nao.
+    echo.
+    goto :openApp
