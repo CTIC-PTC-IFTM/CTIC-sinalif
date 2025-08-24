@@ -23,12 +23,13 @@ public class PagesController {
 
     @GetMapping("/reprodutor")
     public String exibirReprodutor(Model model) {
+        model.addAttribute("tocando", IAgendamentoService.verificarEExecutarAlarmes());
         model.addAttribute("alarmeList", IAlarmeService.listarAlarmesPendentesParaHoje());
         return "pages/reprodutor";
     }
 
     @GetMapping("/reprodutor/anterior")
-    public String reprodutorAnterior() {
+    public String reprodutorAnterior(Model model) {
         IAgendamentoService.voltarMusica();
         return "redirect:/reprodutor";
     }
@@ -40,13 +41,13 @@ public class PagesController {
     }
 
     @GetMapping("/reprodutor/tocar")
-    public String reprodutorTocar() {
+    public String reprodutorTocar(Model model) {
         IAgendamentoService.testarSessao();
         return "redirect:/reprodutor";
     }
 
     @GetMapping("/reprodutor/proxima")
-    public String reprodutorProxima() {
+    public String reprodutorProxima(Model model) {
         IAgendamentoService.proximaMusica();
         return "redirect:/reprodutor";
     }

@@ -38,7 +38,7 @@
                         <td th:text="${alarme.pausado ? 'Sim' : 'Não'}"></td>
                         <td th:text="${#temporals.format(alarme.dataCriacao, 'dd/MM/yyyy HH:mm:ss')}"></td>
                         <td th:text="${#temporals.format(alarme.dataModificacao, 'dd/MM/yyyy HH:mm:ss')}"></td>
-                        <td th:text="${#temporals.format(alarme.dataUltimaExecucao, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                        <td th:text="${alarme.dataUltimaExecucao != null ? #temporals.format(alarme.dataUltimaExecucao, 'dd/MM/yyyy HH:mm:ss') : 'Nunca executado'}"></td>
                         <td th:text="${alarme.etiqueta.nome + ' (' + alarme.etiqueta.duracao + ' min)'}"></td>
                         <td><a class="btn btn-warning" role="button" th:href="@{/alarmes/edit/{idAlarme}(idAlarme=${alarme.idAlarme})}">Editar</a></td>
                         <td><a class="btn btn-danger" role="button" th:href="@{/alarmes/delete/{idAlarme}(idAlarme=${alarme.idAlarme})}">Deletar</a></td>

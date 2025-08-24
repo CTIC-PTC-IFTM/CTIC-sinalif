@@ -3,7 +3,7 @@ package sinalif.services;
 import sinalif.models.Alarme;
 
 public interface AgendamentoService {
-    public void verificarEExecutarAlarmes();
+    public String verificarEExecutarAlarmes();
     public void voltarMusica();
     public void testarSessao();
     public void iniciarSessao(Alarme alarme);
